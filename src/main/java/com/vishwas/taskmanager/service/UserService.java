@@ -2,6 +2,7 @@ package com.vishwas.taskmanager.service;
 
 
 import com.vishwas.taskmanager.dto.CreateUserRequest;
+import com.vishwas.taskmanager.dto.UpdateUserRequest;
 import com.vishwas.taskmanager.dto.UserResponse;
 import com.vishwas.taskmanager.entity.Role;
 import com.vishwas.taskmanager.entity.User;
@@ -32,8 +33,12 @@ public class UserService {
 
     }
 
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
+    public List<UserResponse> getAllUsers(){
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(UserMapper::toResponse)
+                .toList();
     }
 
     public UserResponse getUserById(Long id){
@@ -44,7 +49,18 @@ public class UserService {
         return UserMapper.toResponse(user);
     }
 
+    public UserResponse updateUserById(Long id, UpdateUserRequest userRequest){
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id:" + id));
+        UserMapper.updateEntity(user, userRequest);
+        userRepository.save(user);
+        return UserMapper.toResponse(user);
+    }
+
     public void deleteUserById(Long id){
-        userRepository.deleteById(id);
+
+        User user = userRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found with id:" + id));
+        userRepository.delete(user);
     }
 }

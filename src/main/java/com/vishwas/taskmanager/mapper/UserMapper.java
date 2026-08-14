@@ -1,6 +1,7 @@
 package com.vishwas.taskmanager.mapper;
 
 import com.vishwas.taskmanager.dto.CreateUserRequest;
+import com.vishwas.taskmanager.dto.UpdateUserRequest;
 import com.vishwas.taskmanager.dto.UserResponse;
 import com.vishwas.taskmanager.entity.Role;
 import com.vishwas.taskmanager.entity.User;
@@ -15,7 +16,8 @@ public class UserMapper {
                 user.getName(),
                 user.getEmail(),
                 user.getRole(),
-                user.getCreatedAt()
+                user.getCreatedAt(),
+                user.getUpdatedAt()
         );
 
         return response;
@@ -34,6 +36,15 @@ public class UserMapper {
         user.setUpdatedAt(LocalDateTime.now());
 
         return user;
+
+    }
+
+    public static void updateEntity(User user, UpdateUserRequest request){
+        user.setName(request.name());
+        user.setEmail(request.email());
+        user.setPassword(request.password());
+        user.setRole(request.role());
+        user.setUpdatedAt(LocalDateTime.now());
 
     }
 }
