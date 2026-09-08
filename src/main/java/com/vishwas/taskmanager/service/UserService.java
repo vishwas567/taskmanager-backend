@@ -9,6 +9,7 @@ import com.vishwas.taskmanager.entity.User;
 import com.vishwas.taskmanager.exception.ResourceNotFoundException;
 import com.vishwas.taskmanager.mapper.UserMapper;
 import com.vishwas.taskmanager.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,14 +20,17 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
+    private final PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserResponse createUser(CreateUserRequest request){
         User user = UserMapper.toEntity(request);
-
+        user.setPassword(
+                passwordEncoder.encode(request.password())
+        );
         User savedUser = userRepository.save(user);
 
         return UserMapper.toResponse(savedUser);
