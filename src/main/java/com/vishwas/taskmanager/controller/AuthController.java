@@ -32,8 +32,6 @@ public class AuthController {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Current user: "+ currentUser.getName() +" Authenticate: "+currentUser.isAuthenticated());
         return jwtService.genrateToken(authentication.getName());
     }
 
