@@ -1,6 +1,7 @@
 package com.vishwas.taskmanager.config;
 
 import com.vishwas.taskmanager.security.JwtAuthenticateFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -30,5 +30,17 @@ public class GlobalExceptionHandler {
         return ex.getMessage();
     }
 
+    @ExceptionHandler(InvalidWorkItemTransitionException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleInvalidWorkItemTransitionException(InvalidWorkItemTransitionException ex){
+        return ex.getMessage();
+    }
+
+    @ExceptionHandler(WorkItemAccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handleWorkItemAccessDeniedException(WorkItemAccessDeniedException ex){
+        return ex.getMessage();
+    }
+
 
 }
