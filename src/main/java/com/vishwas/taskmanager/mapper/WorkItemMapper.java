@@ -35,7 +35,8 @@ public class WorkItemMapper {
                 workItem.getStatus(),
                 workItem.getPriority(),
                 workItem.getAssignedTo(),
-                workItem.getCreatedBy()
+                workItem.getCreatedBy(),
+                workItem.getVersion()
         );
     }
 

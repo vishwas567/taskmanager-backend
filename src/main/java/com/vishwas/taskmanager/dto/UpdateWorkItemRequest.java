@@ -9,6 +9,7 @@ public record UpdateWorkItemRequest(
         String description,
         WorkItemStatus status,
         WorkItemPriority priority,
-        Long assignedTo
+        Long assignedTo,
+        Long version
 ) {
 }

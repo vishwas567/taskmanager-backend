@@ -12,6 +12,9 @@ public class WorkItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version
+    private Long version;
+
     @Column(nullable = false)
     private String title;
 
@@ -31,6 +34,8 @@ public class WorkItem {
 
     @Column(nullable = false)
     private Long createdBy;
+
+
 
 
 }

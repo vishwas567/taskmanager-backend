@@ -3,14 +3,18 @@ package com.vishwas.taskmanager.service;
 import com.vishwas.taskmanager.dto.CreateWorkItemRequest;
 import com.vishwas.taskmanager.dto.UpdateWorkItemRequest;
 import com.vishwas.taskmanager.dto.WorkItemResponse;
-import com.vishwas.taskmanager.entity.Role;
-import com.vishwas.taskmanager.entity.User;
-import com.vishwas.taskmanager.entity.WorkItem;
+import com.vishwas.taskmanager.entity.*;
 import com.vishwas.taskmanager.exception.ResourceNotFoundException;
 import com.vishwas.taskmanager.exception.WorkItemAccessDeniedException;
+import com.vishwas.taskmanager.exception.WorkItemVersionConflictException;
 import com.vishwas.taskmanager.mapper.WorkItemMapper;
 import com.vishwas.taskmanager.repository.UserRepository;
 import com.vishwas.taskmanager.repository.WorkItemRepository;
+import com.vishwas.taskmanager.specification.WorkItemSpecification;
+import jakarta.persistence.OptimisticLockException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -61,11 +65,41 @@ public class WorkItemService {
 
     }
 
-    public List<WorkItemResponse> getAllWorkItems(){
-         return workItemRepository.findAll()
-                 .stream()
-                 .map(WorkItemMapper::toResponse)
-                 .toList();
+    public Page<WorkItemResponse> getAllWorkItems(WorkItemStatus status, WorkItemPriority priority, WorkItemType type, Pageable pageable){
+
+        Specification<WorkItem> specification = null;
+
+        if(status!=null){
+            specification = WorkItemSpecification.hasStatus(status);
+        }
+
+        if(priority!= null){
+            Specification<WorkItem> prioritySpec = WorkItemSpecification.hasPriority(priority);
+            if(specification==null){
+                specification = prioritySpec;
+            }
+            else {
+                specification = specification.and(prioritySpec);
+            }
+        }
+
+        if(type!= null){
+            Specification<WorkItem> typeSpec = WorkItemSpecification.hasType(type);
+            if (specification==null){
+                specification=typeSpec;
+            }
+            else {
+                specification =specification.and(typeSpec);
+            }
+        }
+         Page<WorkItem> workItems;
+
+         if(specification!= null){
+             workItems = workItemRepository.findAll(specification, pageable);
+         }else {
+             workItems = workItemRepository.findAll(pageable);
+         }
+         return workItems.map(WorkItemMapper::toResponse);
 
     }
 
@@ -83,6 +117,10 @@ public class WorkItemService {
          WorkItem workItem = workItemRepository.findById(id)
                  .orElseThrow(()->
                          new ResourceNotFoundException("Work Item not found with ID: " + id));
+
+         if(!workItem.getVersion().equals(request.version())){
+             throw new WorkItemVersionConflictException("WorkItem was modified by another user");
+         }
 
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

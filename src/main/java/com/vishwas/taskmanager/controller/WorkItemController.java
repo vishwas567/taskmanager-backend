@@ -4,7 +4,12 @@ package com.vishwas.taskmanager.controller;
 import com.vishwas.taskmanager.dto.CreateWorkItemRequest;
 import com.vishwas.taskmanager.dto.UpdateWorkItemRequest;
 import com.vishwas.taskmanager.dto.WorkItemResponse;
+import com.vishwas.taskmanager.entity.WorkItemPriority;
+import com.vishwas.taskmanager.entity.WorkItemStatus;
+import com.vishwas.taskmanager.entity.WorkItemType;
 import com.vishwas.taskmanager.service.WorkItemService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +31,11 @@ public class WorkItemController {
     }
 
     @GetMapping
-    public List<WorkItemResponse> getAllWorkItems(){
-        return workItemService.getAllWorkItems();
+    public Page<WorkItemResponse> getAllWorkItems(@RequestParam(required = false) WorkItemStatus status,
+                                                  @RequestParam(required = false) WorkItemPriority priority,
+                                                  @RequestParam(required = false) WorkItemType type,
+                                                  Pageable pageable){
+        return workItemService.getAllWorkItems(status, priority, type, pageable);
     }
 
     @GetMapping("/{id}")

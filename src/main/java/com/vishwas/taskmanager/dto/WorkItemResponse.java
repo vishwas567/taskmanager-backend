@@ -13,6 +13,7 @@ public record WorkItemResponse(
         WorkItemStatus status,
         WorkItemPriority priority,
         Long assignedTo,
-        Long createdBy
+        Long createdBy,
+        Long version
 ) {
 }

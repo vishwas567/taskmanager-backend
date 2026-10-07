@@ -42,5 +42,11 @@ public class GlobalExceptionHandler {
         return ex.getMessage();
     }
 
+    @ExceptionHandler(WorkItemVersionConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String handleWorkItemVersionConflictException(WorkItemVersionConflictException  ex){
+        return ex.getMessage();
+    }
+
 
 }
